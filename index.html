@@ -1,277 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SGGAMING Dev Academy</title>
-
-<style>
-body{margin:0;font-family:'Segoe UI';background:#020617;color:white;}
-header{background:linear-gradient(90deg,#22c55e,#3b82f6);padding:15px;text-align:center;font-size:22px;}
-
-nav{display:flex;justify-content:center;gap:8px;padding:10px;background:#0f172a;flex-wrap:wrap;}
-nav button{padding:8px 12px;border:none;border-radius:6px;background:#3b82f6;color:white;}
-
-.section{display:none;padding:20px;}
-.active{display:block;}
-
-.card{
- background:rgba(255,255,255,0.05);
- backdrop-filter:blur(10px);
- padding:15px;margin:12px 0;border-radius:12px;
-}
-
-.code{
- background:#000;padding:12px;border-radius:8px;
- font-family:monospace;color:#22c55e;
- overflow:auto;font-size:13px;
-}
-
-button.action{
- padding:8px 12px;border:none;border-radius:6px;
- background:#22c55e;color:white;margin-top:10px;
- cursor:pointer;
-}
-
-.progress{background:#333;border-radius:10px;margin-bottom:10px;}
-.bar{height:15px;background:#22c55e;width:0%;}
-
-footer{text-align:center;padding:10px;background:#000;}
-</style>
-</head>
-
-<body>
-
-<header>🚀 SGGAMING Dev Academy</header>
-
-<nav>
-<button onclick="show('home')">Home</button>
-<button onclick="show('course')">Course</button>
-<button onclick="reset()">Reset</button>
-<button onclick="setLang('en')">EN</button>
-<button onclick="setLang('bn')">বাংলা</button>
-<button onclick="setLang('hi')">हिंदी</button>
-</nav>
-
-<!-- HOME -->
-<div id="home" class="section active">
-<h2 id="title">Learn Minecraft Plugin Coding 🎮</h2>
-<p id="subtitle">Kid → Beginner → Developer 🚀</p>
-</div>
-
-<!-- COURSE -->
-<div id="course" class="section">
-<h3 id="progressText">Progress</h3>
-<div class="progress"><div id="bar" class="bar"></div></div>
-<div id="content"></div>
-</div>
-
-<footer>© SGGAMING</footer>
-
 <script>
 
-let step = localStorage.getItem("step") || 0;
+let step = parseInt(localStorage.getItem("step")) || 0;
+let xp = parseInt(localStorage.getItem("xp")) || 0;
+let fails = {};
 let lang = "en";
 
-const lessons = {
+const ranks = ["👶 Beginner","🧠 Learner","⚡ Coder","🔥 Developer","🚀 Pro Dev"];
 
-en:[
+function getRank(){
+ let r = Math.floor(xp/50);
+ return ranks[Math.min(r, ranks.length-1)];
+}
+
+const lessons = [
 {
-t:"Introduction",
-kid:"Plugins are like superpowers for your Minecraft server 🎮",
-dev:"plugin.yml defines your plugin identity.",
-code:`name: PluginName
-author: You
-version: 1.0
-main: YourName\\Main`,
-q:"Plugin adds power?",
-a:"yes"
+t:"Plugin Basics",
+concept:"plugin",
+kid:"Plugin = game superpower 🎮",
+dev:"plugin.yml defines plugin identity",
+code:`name: PluginName`,
+q:"What is plugin used for?",
+options:[
+ {t:"Add features to server",hint:"Plugins extend server functionality"},
+ {t:"Delete Minecraft",hint:"Plugins don't destroy the game"},
+ {t:"Change phone battery",hint:"Plugin works inside server, not phone"}
+ ],
+a:0
 },
 {
-t:"Basic Plugin",
-kid:"Plugin starts and shows message 🚀",
-dev:"onEnable() runs when plugin loads.",
-code:`<?php
-namespace YourName;
-
-use pocketmine\\plugin\\PluginBase;
-
-class Main extends PluginBase{
- public function onEnable(){
-  $this->getLogger()->info("Plugin Enabled");
- }
-}`,
-q:"Enable means start?",
-a:"yes"
+t:"onEnable()",
+concept:"enable",
+kid:"Plugin wakes up 🚀",
+dev:"Runs when plugin starts",
+code:`onEnable(){}`,
+q:"When does onEnable run?",
+options:[
+ {t:"When plugin starts",hint:"It runs at startup"},
+ {t:"When server stops",hint:"Stopping uses onDisable"},
+ {t:"Random time",hint:"It is predictable"}
+ ],
+a:0
 },
 {
 t:"Events",
-kid:"Something happens → code runs ⚡",
-dev:"Events trigger automatically.",
-code:`use pocketmine\\event\\player\\PlayerJoinEvent;
-
-public function onJoin(PlayerJoinEvent $event){
- $this->getServer()->broadcastMessage("Joined!");
-}`,
-q:"Event auto runs?",
-a:"yes"
+concept:"event",
+kid:"Game event = something happens ⚡",
+dev:"Triggered automatically",
+code:`PlayerJoinEvent`,
+q:"Event runs when?",
+options:[
+ {t:"Automatically",hint:"Events trigger by actions"},
+ {t:"Only manually",hint:"You don't manually run events"},
+ {t:"Never",hint:"Events always run"}
+ ],
+a:0
 },
 {
 t:"Commands",
-kid:"Type command to control things 🎯",
-dev:"onCommand handles user input.",
-code:`if($cmd->getName()=="test"){
- $sender->sendMessage("Hello");
-}`,
-q:"Command is /test?",
-a:"yes"
+concept:"command",
+kid:"Type to control 🎯",
+dev:"Handles player input",
+code:`/test`,
+q:"Which is a command?",
+options:[
+ {t:"/test",hint:"Commands start with /"},
+ {t:"run()",hint:"That is a function"},
+ {t:"123",hint:"Numbers are not commands"}
+ ],
+a:0
 },
 {
 t:"Config",
-kid:"Save settings 📦",
-dev:"Config stores plugin data.",
-code:`$this->saveDefaultConfig();
-$this->getConfig()->get("key");`,
-q:"Config stores data?",
-a:"yes"
+concept:"config",
+kid:"Save data 📦",
+dev:"Stores settings",
+code:`getConfig()`,
+q:"Config is used for?",
+options:[
+ {t:"Saving data",hint:"Correct use"},
+ {t:"Deleting files",hint:"Not its job"},
+ {t:"Crashing server",hint:"Wrong purpose"}
+ ],
+a:0
 },
 {
 t:"Tasks",
-kid:"Do something after time ⏳",
-dev:"Scheduler runs delayed tasks.",
-code:`scheduleDelayedTask($task,200);`,
-q:"Task runs later?",
-a:"yes"
-},
-{
-t:"Final",
-kid:"You are now a developer 😎",
-dev:"You can build full plugins.",
-code:`Build your own plugin 🚀`,
-q:"You are dev?",
-a:"yes"
-}
-],
-
-bn:[
-{
-t:"শুরু",
-kid:"Plugin মানে শক্তি 🎮",
-dev:"plugin.yml প্লাগিনের তথ্য দেয়",
-code:`name: PluginName`,
-q:"শক্তি দেয়?",
-a:"yes"
-},
-{
-t:"বেসিক",
-kid:"Plugin চালু হয় 🚀",
-dev:"onEnable শুরু হয়",
-code:`onEnable(){}`,
-q:"শুরু?",
-a:"yes"
-},
-{
-t:"ইভেন্ট",
-kid:"কিছু ঘটলে কোড চলে ⚡",
-dev:"Event auto চলে",
-code:`PlayerJoinEvent`,
-q:"Auto?",
-a:"yes"
-},
-{
-t:"কমান্ড",
-kid:"Command দিয়ে control 🎯",
-dev:"onCommand ব্যবহার",
-code:`/test`,
-q:"/test?",
-a:"yes"
-},
-{
-t:"কনফিগ",
-kid:"ডাটা রাখে 📦",
-dev:"Config data store",
-code:`getConfig()`,
-q:"ডাটা?",
-a:"yes"
-},
-{
-t:"টাস্ক",
-kid:"পরে কাজ ⏳",
-dev:"Task delay run",
+concept:"task",
+kid:"Do later ⏳",
+dev:"Runs after delay",
 code:`scheduleTask`,
-q:"পরে?",
-a:"yes"
-},
-{
-t:"শেষ",
-kid:"তুমি developer 😎",
-dev:"Plugin বানাতে পারো",
-code:`Done`,
-q:"dev?",
-a:"yes"
+q:"Task runs?",
+options:[
+ {t:"After time",hint:"Delayed execution"},
+ {t:"Before start",hint:"That is not delay"},
+ {t:"Never",hint:"Tasks do run"}
+ ],
+a:0
 }
-],
-
-hi:[
-{
-t:"शुरू",
-kid:"Plugin शक्ति है 🎮",
-dev:"plugin.yml पहचान देता",
-code:`name: PluginName`,
-q:"शक्ति?",
-a:"yes"
-},
-{
-t:"बेसिक",
-kid:"Plugin चालू 🚀",
-dev:"onEnable start",
-code:`onEnable(){}`,
-q:"शुरू?",
-a:"yes"
-},
-{
-t:"इवेंट",
-kid:"कुछ होता → code चलता ⚡",
-dev:"Events auto trigger",
-code:`PlayerJoinEvent`,
-q:"Auto?",
-a:"yes"
-},
-{
-t:"कमांड",
-kid:"Command से control 🎯",
-dev:"onCommand handle",
-code:`/test`,
-q:"/test?",
-a:"yes"
-},
-{
-t:"कॉन्फिग",
-kid:"डेटा सेव 📦",
-dev:"Config stores data",
-code:`getConfig()`,
-q:"डेटा?",
-a:"yes"
-},
-{
-t:"टास्क",
-kid:"बाद में काम ⏳",
-dev:"Delayed task",
-code:`scheduleTask`,
-q:"बाद?",
-a:"yes"
-},
-{
-t:"अंत",
-kid:"आप developer 😎",
-dev:"Plugin बना सकते",
-code:`Done`,
-q:"dev?",
-a:"yes"
-}
-]
-
-};
+];
 
 function show(id){
  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
@@ -279,8 +105,14 @@ function show(id){
 }
 
 function render(){
- let html="";
- lessons[lang].forEach((l,i)=>{
+ let html=`
+ <div class="card">
+ <h3>🏆 XP: ${xp}</h3>
+ <h3>🎖 Rank: ${getRank()}</h3>
+ </div>
+ `;
+
+ lessons.forEach((l,i)=>{
  let lock=i>step;
 
  html+=`
@@ -293,47 +125,65 @@ function render(){
  <div class="code">${l.code}</div>
 
  <p>🤖 ${l.q}</p>
- <input id="a${i}">
- <button class="action" ${lock?'disabled':''} onclick="check(${i})">
- ${lock?'🔒 Locked':'Submit'}
- </button>
 
- <div id="hint${i}"></div>
+ ${l.options.map((opt,idx)=>`
+ <button class="action" ${lock?'disabled':''}
+ onclick="check(${i},${idx})">
+ ${opt.t}
+ </button>
+ `).join("<br>")}
+
+ <div id="hint${i}" style="margin-top:8px;color:#facc15;"></div>
  </div>`;
  });
 
  document.getElementById("content").innerHTML=html;
- document.getElementById("bar").style.width=(step/lessons[lang].length*100)+"%";
+ document.getElementById("bar").style.width=(step/lessons.length*100)+"%";
 }
 
-function check(i){
- let v=document.getElementById("a"+i).value.toLowerCase();
- if(v==lessons[lang][i].a){
- if(i==step){
- step++;
- localStorage.setItem("step",step);
- alert("🚀 Level Complete!");
- render();
- }
+function check(i,ans){
+
+ if(!fails[i]) fails[i]=0;
+
+ if(ans===lessons[i].a){
+
+  if(i===step){
+   xp+=10;
+   step++;
+   localStorage.setItem("step",step);
+   localStorage.setItem("xp",xp);
+
+   document.getElementById("hint"+i).innerText="✅ Correct! +10 XP";
+   render();
+  }
+
  }else{
- document.getElementById("hint"+i).innerText="🤖 Think simple!";
- }
-}
 
-function setLang(l){
- lang=l;
- render();
+  fails[i]++;
+
+  let smartHint = lessons[i].options[ans].hint;
+
+  if(fails[i]===1){
+   document.getElementById("hint"+i).innerText="❌ Hint: "+smartHint;
+  }
+  else if(fails[i]===2){
+   document.getElementById("hint"+i).innerText="⚠️ Think again: "+lessons[i].dev;
+  }
+  else{
+   document.getElementById("hint"+i).innerText="💡 Answer is: "+lessons[i].options[lessons[i].a].t;
+  }
+ }
+
 }
 
 function reset(){
  localStorage.clear();
  step=0;
+ xp=0;
+ fails={};
  render();
 }
 
 render();
 
 </script>
-
-</body>
-</html>
