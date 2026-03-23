@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ElectroUniverse Coding Academy</title>
+
+<style>
+body {margin:0;font-family:Arial;background:#f5f7fb;}
+header {
+  background:linear-gradient(90deg,#4CAF50,#2196F3);
+  color:white;padding:15px;text-align:center;font-size:22px;
+}
+nav {
+  display:flex;justify-content:center;gap:10px;
+  background:white;padding:10px;
+}
+nav button {
+  padding:8px 12px;border:none;border-radius:8px;
+  background:#2196F3;color:white;cursor:pointer;
+}
+
+.section {display:none;padding:20px;}
+.active {display:block;}
+
+.hero {
+  text-align:center;padding:40px;background:#e3f2fd;
+}
+
+.card {
+  background:white;margin:10px 0;padding:15px;
+  border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.progress {background:#ddd;border-radius:10px;}
+.bar {height:20px;background:#4CAF50;width:0%;}
+
+.owner {
+  background:white;margin:20px;padding:20px;
+  text-align:center;border-radius:10px;
+}
+
+footer {
+  background:#222;color:white;text-align:center;padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🎮 ElectroUniverse Coding Academy</header>
+
+<nav>
+  <button onclick="show('home')">Home</button>
+  <button onclick="show('course')">Course</button>
+  <button onclick="setLang('en')">EN</button>
+  <button onclick="setLang('bn')">বাংলা</button>
+  <button onclick="setLang('hi')">हिंदी</button>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="section active">
+  <div class="hero">
+    <h1 id="heroTitle">Learn Coding with Minecraft 🎮</h1>
+    <p id="heroText">Fun + Game + Programming</p>
+    <button onclick="show('course')">Start Learning 🚀</button>
+  </div>
+
+  <div class="card">
+    <h3>🌟 Features</h3>
+    <p>✔ Interactive Lessons<br>✔ Kids Friendly<br>✔ Multi Language<br>✔ Progress Tracking</p>
+  </div>
+</div>
+
+<!-- COURSE -->
+<div id="course" class="section">
+
+  <h2>Course Progress</h2>
+  <div class="progress"><div id="bar" class="bar"></div></div>
+
+  <div id="lessons"></div>
+
+</div>
+
+<!-- OWNER -->
+<div class="owner">
+  <h3>Plugin Owner</h3>
+  <p>Electro Demolish</p>
+  <p>Founder & Developer</p>
+</div>
+
+<footer>© 2026 ElectroUniverse</footer>
+
+<script>
+
+let progress = localStorage.getItem("progress") || 0;
+let lang = "en";
+
+const data = {
+  en:[
+    {t:"Play",q:"Build house?",a:"yes"},
+    {t:"Commands",q:"Computer listens?",a:"yes"},
+    {t:"Loops",q:"Repeat?",a:"again"},
+    {t:"Robot",q:"Agent helper?",a:"yes"},
+    {t:"Coordinates",q:"X,Y,Z?",a:"position"},
+    {t:"Projects",q:"Build code?",a:"yes"},
+    {t:"Python",q:"Real coding?",a:"yes"}
+  ],
+  bn:[
+    {t:"খেলা",q:"ঘর বানাবে?",a:"yes"},
+    {t:"নির্দেশ",q:"কম্পিউটার শুনে?",a:"yes"},
+    {t:"রিপিট",q:"পুনরাবৃত্তি?",a:"again"},
+    {t:"রোবট",q:"রোবট সাহায্য?",a:"yes"},
+    {t:"কো-অর্ডিনেট",q:"X,Y,Z?",a:"position"},
+    {t:"প্রজেক্ট",q:"কোড?",a:"yes"},
+    {t:"পাইথন",q:"আসল কোড?",a:"yes"}
+  ],
+  hi:[
+    {t:"खेल",q:"घर बनाओ?",a:"yes"},
+    {t:"कमांड",q:"कंप्यूटर सुनता?",a:"yes"},
+    {t:"रिपीट",q:"दोहराना?",a:"again"},
+    {t:"रोबोट",q:"रोबोट मदद?",a:"yes"},
+    {t:"कोऑर्डिनेट",q:"X,Y,Z?",a:"position"},
+    {t:"प्रोजेक्ट",q:"कोड?",a:"yes"},
+    {t:"पाइथन",q:"असली कोड?",a:"yes"}
+  ]
+};
+
+function show(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function render(){
+  let html="";
+  data[lang].forEach((l,i)=>{
+    let locked=i>progress;
+    html+=`
+      <div class="card">
+        <h3>Level ${i+1}: ${l.t}</h3>
+        <p>🤖 ${l.q}</p>
+        <input id="a${i}" placeholder="Answer">
+        <button onclick="check(${i})" ${locked?"disabled":""}>
+          ${locked?"🔒 Locked":"Submit"}
+        </button>
+      </div>
+    `;
+  });
+  document.getElementById("lessons").innerHTML=html;
+
+  document.getElementById("bar").style.width=(progress/7*100)+"%";
+}
+
+function check(i){
+  let val=document.getElementById("a"+i).value.toLowerCase();
+  if(val==data[lang][i].a){
+    if(i==progress){
+      progress++;
+      localStorage.setItem("progress",progress);
+      alert("🎉 Level Complete!");
+      render();
+    }
+  } else alert("❌ Try again");
+}
+
+function setLang(l){
+  lang=l;
+  render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
