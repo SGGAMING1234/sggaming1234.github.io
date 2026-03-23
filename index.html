@@ -3,169 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ElectroUniverse Coding Academy</title>
+<title>SGGAMING Dev Academy</title>
 
 <style>
-body {margin:0;font-family:Arial;background:#f5f7fb;}
-header {
-  background:linear-gradient(90deg,#4CAF50,#2196F3);
-  color:white;padding:15px;text-align:center;font-size:22px;
-}
-nav {
-  display:flex;justify-content:center;gap:10px;
-  background:white;padding:10px;
-}
-nav button {
-  padding:8px 12px;border:none;border-radius:8px;
-  background:#2196F3;color:white;cursor:pointer;
+body{margin:0;font-family:'Segoe UI';background:#020617;color:white;}
+header{background:linear-gradient(90deg,#22c55e,#3b82f6);padding:15px;text-align:center;font-size:22px;}
+nav{display:flex;justify-content:center;gap:8px;padding:10px;background:#0f172a;flex-wrap:wrap;}
+nav button{padding:8px 12px;border:none;border-radius:6px;background:#3b82f6;color:white;}
+
+.section{display:none;padding:20px;}
+.active{display:block;}
+
+.card{
+ background:rgba(255,255,255,0.05);
+ backdrop-filter:blur(10px);
+ padding:15px;margin:10px 0;border-radius:10px;
 }
 
-.section {display:none;padding:20px;}
-.active {display:block;}
-
-.hero {
-  text-align:center;padding:40px;background:#e3f2fd;
+.code{
+ background:#000;padding:10px;border-radius:6px;
+ font-family:monospace;color:#22c55e;
+ overflow:auto;
 }
 
-.card {
-  background:white;margin:10px 0;padding:15px;
-  border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);
+button.action{
+ padding:8px 12px;border:none;border-radius:6px;
+ background:#22c55e;color:white;margin-top:10px;
 }
 
-.progress {background:#ddd;border-radius:10px;}
-.bar {height:20px;background:#4CAF50;width:0%;}
+.progress{background:#333;border-radius:10px;}
+.bar{height:15px;background:#22c55e;width:0%;}
 
-.owner {
-  background:white;margin:20px;padding:20px;
-  text-align:center;border-radius:10px;
-}
-
-footer {
-  background:#222;color:white;text-align:center;padding:10px;
-}
+footer{text-align:center;padding:10px;background:#000;}
 </style>
 </head>
 
 <body>
 
-<header>🎮 ElectroUniverse Coding Academy</header>
+<header>🚀 SGGAMING GOD MODE Academy</header>
 
 <nav>
-  <button onclick="show('home')">Home</button>
-  <button onclick="show('course')">Course</button>
-  <button onclick="setLang('en')">EN</button>
-  <button onclick="setLang('bn')">বাংলা</button>
-  <button onclick="setLang('hi')">हिंदी</button>
+<button onclick="show('home')">Home</button>
+<button onclick="show('course')">Course</button>
+<button onclick="show('generator')">Generator</button>
+<button onclick="reset()">Reset</button>
+<button onclick="setLang('en')">EN</button>
+<button onclick="setLang('bn')">বাংলা</button>
+<button onclick="setLang('hi')">हिंदी</button>
 </nav>
 
 <!-- HOME -->
 <div id="home" class="section active">
-  <div class="hero">
-    <h1 id="heroTitle">Learn Coding with Minecraft 🎮</h1>
-    <p id="heroText">Fun + Game + Programming</p>
-    <button onclick="show('course')">Start Learning 🚀</button>
-  </div>
-
-  <div class="card">
-    <h3>🌟 Features</h3>
-    <p>✔ Interactive Lessons<br>✔ Kids Friendly<br>✔ Multi Language<br>✔ Progress Tracking</p>
-  </div>
+<h2>🎮 Learn Minecraft Plugin Coding</h2>
+<p>Kid → Pro Developer 🚀</p>
 </div>
 
 <!-- COURSE -->
 <div id="course" class="section">
-
-  <h2>Course Progress</h2>
-  <div class="progress"><div id="bar" class="bar"></div></div>
-
-  <div id="lessons"></div>
-
+<h3>Progress</h3>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<div id="content"></div>
 </div>
 
-<!-- OWNER -->
-<div class="owner">
-  <h3>Plugin Owner</h3>
-  <p>Electro Demolish</p>
-  <p>Founder & Developer</p>
+<!-- GENERATOR -->
+<div id="generator" class="section">
+<h2>📦 Plugin Generator</h2>
+
+<div class="card">
+<input id="pname" placeholder="Plugin Name"><br><br>
+<input id="author" placeholder="Author Name"><br><br>
+
+<button class="action" onclick="generate()">Generate Plugin</button>
+
+<div class="code" id="output"></div>
+</div>
 </div>
 
-<footer>© 2026 ElectroUniverse</footer>
+<footer>© SGGAMING</footer>
 
 <script>
 
-let progress = localStorage.getItem("progress") || 0;
-let lang = "en";
+let step=localStorage.getItem("step")||0;
+let lang="en";
 
-const data = {
-  en:[
-    {t:"Play",q:"Build house?",a:"yes"},
-    {t:"Commands",q:"Computer listens?",a:"yes"},
-    {t:"Loops",q:"Repeat?",a:"again"},
-    {t:"Robot",q:"Agent helper?",a:"yes"},
-    {t:"Coordinates",q:"X,Y,Z?",a:"position"},
-    {t:"Projects",q:"Build code?",a:"yes"},
-    {t:"Python",q:"Real coding?",a:"yes"}
-  ],
-  bn:[
-    {t:"খেলা",q:"ঘর বানাবে?",a:"yes"},
-    {t:"নির্দেশ",q:"কম্পিউটার শুনে?",a:"yes"},
-    {t:"রিপিট",q:"পুনরাবৃত্তি?",a:"again"},
-    {t:"রোবট",q:"রোবট সাহায্য?",a:"yes"},
-    {t:"কো-অর্ডিনেট",q:"X,Y,Z?",a:"position"},
-    {t:"প্রজেক্ট",q:"কোড?",a:"yes"},
-    {t:"পাইথন",q:"আসল কোড?",a:"yes"}
-  ],
-  hi:[
-    {t:"खेल",q:"घर बनाओ?",a:"yes"},
-    {t:"कमांड",q:"कंप्यूटर सुनता?",a:"yes"},
-    {t:"रिपीट",q:"दोहराना?",a:"again"},
-    {t:"रोबोट",q:"रोबोट मदद?",a:"yes"},
-    {t:"कोऑर्डिनेट",q:"X,Y,Z?",a:"position"},
-    {t:"प्रोजेक्ट",q:"कोड?",a:"yes"},
-    {t:"पाइथन",q:"असली कोड?",a:"yes"}
-  ]
+const lessons={
+en:[
+{t:"Intro",c:"Plugins = server power",q:"Plugin adds power?",a:"yes"},
+{t:"Basic",c:"onEnable starts plugin",q:"Enable start?",a:"yes"},
+{t:"Events",c:"Join auto event",q:"Auto event?",a:"yes"},
+{t:"Commands",c:"/test command",q:"/test?",a:"yes"},
+{t:"Config",c:"Stores data",q:"Stores data?",a:"yes"},
+{t:"Tasks",c:"Runs later",q:"Runs later?",a:"yes"},
+{t:"Dev",c:"You dev now",q:"You dev?",a:"yes"}
+],
+bn:[
+{t:"শুরু",c:"Plugin শক্তি",q:"শক্তি দেয়?",a:"yes"},
+{t:"বেসিক",c:"Enable শুরু",q:"শুরু?",a:"yes"},
+{t:"ইভেন্ট",c:"Auto চলে",q:"Auto?",a:"yes"},
+{t:"কমান্ড",c:"/test",q:"/test?",a:"yes"},
+{t:"কনফিগ",c:"ডাটা রাখে",q:"ডাটা?",a:"yes"},
+{t:"টাস্ক",c:"পরে চলে",q:"পরে?",a:"yes"},
+{t:"ডেভ",c:"তুমি dev",q:"dev?",a:"yes"}
+],
+hi:[
+{t:"शुरू",c:"Plugin शक्ति",q:"शक्ति?",a:"yes"},
+{t:"बेसिक",c:"Enable शुरू",q:"शुरू?",a:"yes"},
+{t:"इवेंट",c:"Auto",q:"Auto?",a:"yes"},
+{t:"कमांड",c:"/test",q:"/test?",a:"yes"},
+{t:"कॉन्फिग",c:"डेटा",q:"डेटा?",a:"yes"},
+{t:"टास्क",c:"बाद",q:"बाद?",a:"yes"},
+{t:"डेव",c:"आप dev",q:"dev?",a:"yes"}
+]
 };
 
 function show(id){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
 }
 
 function render(){
-  let html="";
-  data[lang].forEach((l,i)=>{
-    let locked=i>progress;
-    html+=`
-      <div class="card">
-        <h3>Level ${i+1}: ${l.t}</h3>
-        <p>🤖 ${l.q}</p>
-        <input id="a${i}" placeholder="Answer">
-        <button onclick="check(${i})" ${locked?"disabled":""}>
-          ${locked?"🔒 Locked":"Submit"}
-        </button>
-      </div>
-    `;
-  });
-  document.getElementById("lessons").innerHTML=html;
-
-  document.getElementById("bar").style.width=(progress/7*100)+"%";
+ let html="";
+ lessons[lang].forEach((l,i)=>{
+ let lock=i>step;
+ html+=`
+ <div class="card">
+ <h3>Level ${i+1}: ${l.t}</h3>
+ <p>${l.c}</p>
+ <p>🤖 ${l.q}</p>
+ <input id="a${i}">
+ <button class="action" ${lock?'disabled':''} onclick="check(${i})">
+ ${lock?'🔒 Locked':'Submit'}
+ </button>
+ <div id="hint${i}"></div>
+ </div>`;
+ });
+ document.getElementById("content").innerHTML=html;
+ document.getElementById("bar").style.width=(step/7*100)+"%";
 }
 
 function check(i){
-  let val=document.getElementById("a"+i).value.toLowerCase();
-  if(val==data[lang][i].a){
-    if(i==progress){
-      progress++;
-      localStorage.setItem("progress",progress);
-      alert("🎉 Level Complete!");
-      render();
-    }
-  } else alert("❌ Try again");
+ let v=document.getElementById("a"+i).value.toLowerCase();
+ if(v==lessons[lang][i].a){
+ if(i==step){step++;localStorage.setItem("step",step);alert("🚀 Done");render();}
+ }else{
+ document.getElementById("hint"+i).innerText="🤖 Hint: Think simple!";
+ }
 }
 
-function setLang(l){
-  lang=l;
-  render();
+function setLang(l){lang=l;render();}
+
+function reset(){localStorage.clear();step=0;render();}
+
+function generate(){
+ let name=document.getElementById("pname").value||"MyPlugin";
+ let author=document.getElementById("author").value||"SG";
+
+ let code=
+`name: ${name}
+author: ${author}
+version: 1.0
+main: ${author}\\Main
+
+<?php
+namespace ${author};
+
+use pocketmine\\plugin\\PluginBase;
+
+class Main extends PluginBase{
+ public function onEnable(){
+  $this->getLogger()->info("${name} Enabled");
+ }
+}`;
+ document.getElementById("output").innerText=code;
 }
 
 render();
