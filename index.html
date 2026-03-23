@@ -8,6 +8,7 @@
 <style>
 body{margin:0;font-family:'Segoe UI';background:#020617;color:white;}
 header{background:linear-gradient(90deg,#22c55e,#3b82f6);padding:15px;text-align:center;font-size:22px;}
+
 nav{display:flex;justify-content:center;gap:8px;padding:10px;background:#0f172a;flex-wrap:wrap;}
 nav button{padding:8px 12px;border:none;border-radius:6px;background:#3b82f6;color:white;}
 
@@ -16,7 +17,7 @@ nav button{padding:8px 12px;border:none;border-radius:6px;background:#3b82f6;col
 
 .card{
  background:rgba(255,255,255,0.05);
- backdrop-filter:blur(12px);
+ backdrop-filter:blur(10px);
  padding:15px;margin:12px 0;border-radius:12px;
 }
 
@@ -41,12 +42,11 @@ footer{text-align:center;padding:10px;background:#000;}
 
 <body>
 
-<header>🚀 SGGAMING GOD+ Dev Academy</header>
+<header>🚀 SGGAMING Dev Academy</header>
 
 <nav>
 <button onclick="show('home')">Home</button>
 <button onclick="show('course')">Course</button>
-<button onclick="show('generator')">Generator</button>
 <button onclick="reset()">Reset</button>
 <button onclick="setLang('en')">EN</button>
 <button onclick="setLang('bn')">বাংলা</button>
@@ -55,29 +55,15 @@ footer{text-align:center;padding:10px;background:#000;}
 
 <!-- HOME -->
 <div id="home" class="section active">
-<h2>🎮 Learn Minecraft Plugin Coding</h2>
-<p>Kid → Beginner → Developer 🚀</p>
+<h2 id="title">Learn Minecraft Plugin Coding 🎮</h2>
+<p id="subtitle">Kid → Beginner → Developer 🚀</p>
 </div>
 
 <!-- COURSE -->
 <div id="course" class="section">
-<h3>📊 Progress</h3>
+<h3 id="progressText">Progress</h3>
 <div class="progress"><div id="bar" class="bar"></div></div>
 <div id="content"></div>
-</div>
-
-<!-- GENERATOR -->
-<div id="generator" class="section">
-<h2>📦 Plugin Generator</h2>
-
-<div class="card">
-<input id="pname" placeholder="Plugin Name"><br><br>
-<input id="author" placeholder="Author Name"><br><br>
-
-<button class="action" onclick="generate()">Generate Plugin</button>
-
-<div class="code" id="output"></div>
-</div>
 </div>
 
 <footer>© SGGAMING</footer>
@@ -87,11 +73,13 @@ footer{text-align:center;padding:10px;background:#000;}
 let step = localStorage.getItem("step") || 0;
 let lang = "en";
 
-const lessons = [
+const lessons = {
 
+en:[
 {
-title:"Introduction",
-desc:"Plugins are like superpowers for Minecraft server.",
+t:"Introduction",
+kid:"Plugins are like superpowers for your Minecraft server 🎮",
+dev:"plugin.yml defines your plugin identity.",
 code:`name: PluginName
 author: You
 version: 1.0
@@ -99,77 +87,191 @@ main: YourName\\Main`,
 q:"Plugin adds power?",
 a:"yes"
 },
-
 {
-title:"Basic Plugin",
-desc:"Every plugin starts with PHP and PluginBase.",
+t:"Basic Plugin",
+kid:"Plugin starts and shows message 🚀",
+dev:"onEnable() runs when plugin loads.",
 code:`<?php
 namespace YourName;
 
 use pocketmine\\plugin\\PluginBase;
 
 class Main extends PluginBase{
-
  public function onEnable(){
   $this->getLogger()->info("Plugin Enabled");
  }
-
 }`,
 q:"Enable means start?",
 a:"yes"
 },
-
 {
-title:"Events",
-desc:"Events run automatically when something happens.",
+t:"Events",
+kid:"Something happens → code runs ⚡",
+dev:"Events trigger automatically.",
 code:`use pocketmine\\event\\player\\PlayerJoinEvent;
 
 public function onJoin(PlayerJoinEvent $event){
- $player = $event->getPlayer();
- $this->getServer()->broadcastMessage("Player Joined!");
+ $this->getServer()->broadcastMessage("Joined!");
 }`,
 q:"Event auto runs?",
 a:"yes"
 },
-
 {
-title:"Commands",
-desc:"Commands allow players to control things.",
-code:`public function onCommand($sender,$cmd,$label,$args){
- if($cmd->getName()=="test"){
-  $sender->sendMessage("Hello!");
- }
+t:"Commands",
+kid:"Type command to control things 🎯",
+dev:"onCommand handles user input.",
+code:`if($cmd->getName()=="test"){
+ $sender->sendMessage("Hello");
 }`,
 q:"Command is /test?",
 a:"yes"
 },
-
 {
-title:"Config",
-desc:"Config stores data for plugin.",
+t:"Config",
+kid:"Save settings 📦",
+dev:"Config stores plugin data.",
 code:`$this->saveDefaultConfig();
-$key = $this->getConfig()->get("key");`,
+$this->getConfig()->get("key");`,
 q:"Config stores data?",
 a:"yes"
 },
-
 {
-title:"Tasks",
-desc:"Tasks run after time.",
-code:`$this->getScheduler()->scheduleDelayedTask($task,200);`,
+t:"Tasks",
+kid:"Do something after time ⏳",
+dev:"Scheduler runs delayed tasks.",
+code:`scheduleDelayedTask($task,200);`,
 q:"Task runs later?",
 a:"yes"
 },
-
 {
-title:"Final",
-desc:"You are now a developer 🚀",
-code:`Build your own plugin now!`,
+t:"Final",
+kid:"You are now a developer 😎",
+dev:"You can build full plugins.",
+code:`Build your own plugin 🚀`,
 q:"You are dev?",
 a:"yes"
 }
+],
 
-];
+bn:[
+{
+t:"শুরু",
+kid:"Plugin মানে শক্তি 🎮",
+dev:"plugin.yml প্লাগিনের তথ্য দেয়",
+code:`name: PluginName`,
+q:"শক্তি দেয়?",
+a:"yes"
+},
+{
+t:"বেসিক",
+kid:"Plugin চালু হয় 🚀",
+dev:"onEnable শুরু হয়",
+code:`onEnable(){}`,
+q:"শুরু?",
+a:"yes"
+},
+{
+t:"ইভেন্ট",
+kid:"কিছু ঘটলে কোড চলে ⚡",
+dev:"Event auto চলে",
+code:`PlayerJoinEvent`,
+q:"Auto?",
+a:"yes"
+},
+{
+t:"কমান্ড",
+kid:"Command দিয়ে control 🎯",
+dev:"onCommand ব্যবহার",
+code:`/test`,
+q:"/test?",
+a:"yes"
+},
+{
+t:"কনফিগ",
+kid:"ডাটা রাখে 📦",
+dev:"Config data store",
+code:`getConfig()`,
+q:"ডাটা?",
+a:"yes"
+},
+{
+t:"টাস্ক",
+kid:"পরে কাজ ⏳",
+dev:"Task delay run",
+code:`scheduleTask`,
+q:"পরে?",
+a:"yes"
+},
+{
+t:"শেষ",
+kid:"তুমি developer 😎",
+dev:"Plugin বানাতে পারো",
+code:`Done`,
+q:"dev?",
+a:"yes"
+}
+],
+
+hi:[
+{
+t:"शुरू",
+kid:"Plugin शक्ति है 🎮",
+dev:"plugin.yml पहचान देता",
+code:`name: PluginName`,
+q:"शक्ति?",
+a:"yes"
+},
+{
+t:"बेसिक",
+kid:"Plugin चालू 🚀",
+dev:"onEnable start",
+code:`onEnable(){}`,
+q:"शुरू?",
+a:"yes"
+},
+{
+t:"इवेंट",
+kid:"कुछ होता → code चलता ⚡",
+dev:"Events auto trigger",
+code:`PlayerJoinEvent`,
+q:"Auto?",
+a:"yes"
+},
+{
+t:"कमांड",
+kid:"Command से control 🎯",
+dev:"onCommand handle",
+code:`/test`,
+q:"/test?",
+a:"yes"
+},
+{
+t:"कॉन्फिग",
+kid:"डेटा सेव 📦",
+dev:"Config stores data",
+code:`getConfig()`,
+q:"डेटा?",
+a:"yes"
+},
+{
+t:"टास्क",
+kid:"बाद में काम ⏳",
+dev:"Delayed task",
+code:`scheduleTask`,
+q:"बाद?",
+a:"yes"
+},
+{
+t:"अंत",
+kid:"आप developer 😎",
+dev:"Plugin बना सकते",
+code:`Done`,
+q:"dev?",
+a:"yes"
+}
+]
+
+};
 
 function show(id){
  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
@@ -178,13 +280,15 @@ function show(id){
 
 function render(){
  let html="";
- lessons.forEach((l,i)=>{
+ lessons[lang].forEach((l,i)=>{
  let lock=i>step;
 
  html+=`
  <div class="card">
- <h3>Level ${i+1}: ${l.title}</h3>
- <p>${l.desc}</p>
+ <h3>Level ${i+1}: ${l.t}</h3>
+
+ <p>👶 ${l.kid}</p>
+ <p>🧑‍💻 ${l.dev}</p>
 
  <div class="code">${l.code}</div>
 
@@ -199,12 +303,12 @@ function render(){
  });
 
  document.getElementById("content").innerHTML=html;
- document.getElementById("bar").style.width=(step/lessons.length*100)+"%";
+ document.getElementById("bar").style.width=(step/lessons[lang].length*100)+"%";
 }
 
 function check(i){
  let v=document.getElementById("a"+i).value.toLowerCase();
- if(v==lessons[i].a){
+ if(v==lessons[lang][i].a){
  if(i==step){
  step++;
  localStorage.setItem("step",step);
@@ -216,32 +320,15 @@ function check(i){
  }
 }
 
-function setLang(l){lang=l;}
+function setLang(l){
+ lang=l;
+ render();
+}
 
-function reset(){localStorage.clear();step=0;render();}
-
-function generate(){
- let name=document.getElementById("pname").value||"MyPlugin";
- let author=document.getElementById("author").value||"SG";
-
- let code=
-`name: ${name}
-author: ${author}
-version: 1.0
-main: ${author}\\Main
-
-<?php
-namespace ${author};
-
-use pocketmine\\plugin\\PluginBase;
-
-class Main extends PluginBase{
- public function onEnable(){
-  $this->getLogger()->info("${name} Enabled");
- }
-}`;
-
- document.getElementById("output").innerText=code;
+function reset(){
+ localStorage.clear();
+ step=0;
+ render();
 }
 
 render();
