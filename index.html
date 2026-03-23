@@ -16,22 +16,23 @@ nav button{padding:8px 12px;border:none;border-radius:6px;background:#3b82f6;col
 
 .card{
  background:rgba(255,255,255,0.05);
- backdrop-filter:blur(10px);
- padding:15px;margin:10px 0;border-radius:10px;
+ backdrop-filter:blur(12px);
+ padding:15px;margin:12px 0;border-radius:12px;
 }
 
 .code{
- background:#000;padding:10px;border-radius:6px;
+ background:#000;padding:12px;border-radius:8px;
  font-family:monospace;color:#22c55e;
- overflow:auto;
+ overflow:auto;font-size:13px;
 }
 
 button.action{
  padding:8px 12px;border:none;border-radius:6px;
  background:#22c55e;color:white;margin-top:10px;
+ cursor:pointer;
 }
 
-.progress{background:#333;border-radius:10px;}
+.progress{background:#333;border-radius:10px;margin-bottom:10px;}
 .bar{height:15px;background:#22c55e;width:0%;}
 
 footer{text-align:center;padding:10px;background:#000;}
@@ -40,7 +41,7 @@ footer{text-align:center;padding:10px;background:#000;}
 
 <body>
 
-<header>🚀 SGGAMING GOD MODE Academy</header>
+<header>🚀 SGGAMING GOD+ Dev Academy</header>
 
 <nav>
 <button onclick="show('home')">Home</button>
@@ -55,12 +56,12 @@ footer{text-align:center;padding:10px;background:#000;}
 <!-- HOME -->
 <div id="home" class="section active">
 <h2>🎮 Learn Minecraft Plugin Coding</h2>
-<p>Kid → Pro Developer 🚀</p>
+<p>Kid → Beginner → Developer 🚀</p>
 </div>
 
 <!-- COURSE -->
 <div id="course" class="section">
-<h3>Progress</h3>
+<h3>📊 Progress</h3>
 <div class="progress"><div id="bar" class="bar"></div></div>
 <div id="content"></div>
 </div>
@@ -83,38 +84,92 @@ footer{text-align:center;padding:10px;background:#000;}
 
 <script>
 
-let step=localStorage.getItem("step")||0;
-let lang="en";
+let step = localStorage.getItem("step") || 0;
+let lang = "en";
 
-const lessons={
-en:[
-{t:"Intro",c:"Plugins = server power",q:"Plugin adds power?",a:"yes"},
-{t:"Basic",c:"onEnable starts plugin",q:"Enable start?",a:"yes"},
-{t:"Events",c:"Join auto event",q:"Auto event?",a:"yes"},
-{t:"Commands",c:"/test command",q:"/test?",a:"yes"},
-{t:"Config",c:"Stores data",q:"Stores data?",a:"yes"},
-{t:"Tasks",c:"Runs later",q:"Runs later?",a:"yes"},
-{t:"Dev",c:"You dev now",q:"You dev?",a:"yes"}
-],
-bn:[
-{t:"শুরু",c:"Plugin শক্তি",q:"শক্তি দেয়?",a:"yes"},
-{t:"বেসিক",c:"Enable শুরু",q:"শুরু?",a:"yes"},
-{t:"ইভেন্ট",c:"Auto চলে",q:"Auto?",a:"yes"},
-{t:"কমান্ড",c:"/test",q:"/test?",a:"yes"},
-{t:"কনফিগ",c:"ডাটা রাখে",q:"ডাটা?",a:"yes"},
-{t:"টাস্ক",c:"পরে চলে",q:"পরে?",a:"yes"},
-{t:"ডেভ",c:"তুমি dev",q:"dev?",a:"yes"}
-],
-hi:[
-{t:"शुरू",c:"Plugin शक्ति",q:"शक्ति?",a:"yes"},
-{t:"बेसिक",c:"Enable शुरू",q:"शुरू?",a:"yes"},
-{t:"इवेंट",c:"Auto",q:"Auto?",a:"yes"},
-{t:"कमांड",c:"/test",q:"/test?",a:"yes"},
-{t:"कॉन्फिग",c:"डेटा",q:"डेटा?",a:"yes"},
-{t:"टास्क",c:"बाद",q:"बाद?",a:"yes"},
-{t:"डेव",c:"आप dev",q:"dev?",a:"yes"}
-]
-};
+const lessons = [
+
+{
+title:"Introduction",
+desc:"Plugins are like superpowers for Minecraft server.",
+code:`name: PluginName
+author: You
+version: 1.0
+main: YourName\\Main`,
+q:"Plugin adds power?",
+a:"yes"
+},
+
+{
+title:"Basic Plugin",
+desc:"Every plugin starts with PHP and PluginBase.",
+code:`<?php
+namespace YourName;
+
+use pocketmine\\plugin\\PluginBase;
+
+class Main extends PluginBase{
+
+ public function onEnable(){
+  $this->getLogger()->info("Plugin Enabled");
+ }
+
+}`,
+q:"Enable means start?",
+a:"yes"
+},
+
+{
+title:"Events",
+desc:"Events run automatically when something happens.",
+code:`use pocketmine\\event\\player\\PlayerJoinEvent;
+
+public function onJoin(PlayerJoinEvent $event){
+ $player = $event->getPlayer();
+ $this->getServer()->broadcastMessage("Player Joined!");
+}`,
+q:"Event auto runs?",
+a:"yes"
+},
+
+{
+title:"Commands",
+desc:"Commands allow players to control things.",
+code:`public function onCommand($sender,$cmd,$label,$args){
+ if($cmd->getName()=="test"){
+  $sender->sendMessage("Hello!");
+ }
+}`,
+q:"Command is /test?",
+a:"yes"
+},
+
+{
+title:"Config",
+desc:"Config stores data for plugin.",
+code:`$this->saveDefaultConfig();
+$key = $this->getConfig()->get("key");`,
+q:"Config stores data?",
+a:"yes"
+},
+
+{
+title:"Tasks",
+desc:"Tasks run after time.",
+code:`$this->getScheduler()->scheduleDelayedTask($task,200);`,
+q:"Task runs later?",
+a:"yes"
+},
+
+{
+title:"Final",
+desc:"You are now a developer 🚀",
+code:`Build your own plugin now!`,
+q:"You are dev?",
+a:"yes"
+}
+
+];
 
 function show(id){
  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
@@ -123,34 +178,45 @@ function show(id){
 
 function render(){
  let html="";
- lessons[lang].forEach((l,i)=>{
+ lessons.forEach((l,i)=>{
  let lock=i>step;
+
  html+=`
  <div class="card">
- <h3>Level ${i+1}: ${l.t}</h3>
- <p>${l.c}</p>
+ <h3>Level ${i+1}: ${l.title}</h3>
+ <p>${l.desc}</p>
+
+ <div class="code">${l.code}</div>
+
  <p>🤖 ${l.q}</p>
  <input id="a${i}">
  <button class="action" ${lock?'disabled':''} onclick="check(${i})">
  ${lock?'🔒 Locked':'Submit'}
  </button>
+
  <div id="hint${i}"></div>
  </div>`;
  });
+
  document.getElementById("content").innerHTML=html;
- document.getElementById("bar").style.width=(step/7*100)+"%";
+ document.getElementById("bar").style.width=(step/lessons.length*100)+"%";
 }
 
 function check(i){
  let v=document.getElementById("a"+i).value.toLowerCase();
- if(v==lessons[lang][i].a){
- if(i==step){step++;localStorage.setItem("step",step);alert("🚀 Done");render();}
+ if(v==lessons[i].a){
+ if(i==step){
+ step++;
+ localStorage.setItem("step",step);
+ alert("🚀 Level Complete!");
+ render();
+ }
  }else{
- document.getElementById("hint"+i).innerText="🤖 Hint: Think simple!";
+ document.getElementById("hint"+i).innerText="🤖 Think simple!";
  }
 }
 
-function setLang(l){lang=l;render();}
+function setLang(l){lang=l;}
 
 function reset(){localStorage.clear();step=0;render();}
 
@@ -174,6 +240,7 @@ class Main extends PluginBase{
   $this->getLogger()->info("${name} Enabled");
  }
 }`;
+
  document.getElementById("output").innerText=code;
 }
 
